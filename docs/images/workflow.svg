@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">从产品图到透明印花</title>
+<desc id="desc">首次准备安装和可选的 AI 配置。上传产品图，提取印花，预览结果。满意时直接下载透明 PNG，不满意或结果带背景时，直接继续精修并下载。</desc>
+<metadata>Static 16:10 diagram. Editable source; colors from the actual workbench CSS. No design.md was present.</metadata>
+<defs>
+ <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#818c94"/></marker>
+ <marker id="arrow-accent" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#b5ed7c"/></marker>
+</defs>
+<style>text{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;letter-spacing:0} .label{font-size:34px;font-weight:600} .body{font-size:26px;font-weight:400} .edge-label{font-size:26px;font-weight:500}</style>
+<rect width="1600" height="1000" fill="#111315"/>
+<text x="100" y="112" fill="#e4e6eb" font-size="52" font-weight="600">从产品图到透明印花</text>
+<text x="1460" y="108" fill="#889199" font-size="20" text-anchor="end">PRINT EXTRACTOR AI</text>
+<rect x="100" y="170" width="620" height="60" rx="12" fill="#191c1f" stroke="#34393e"/>
+<circle cx="130" cy="200" r="5" fill="#b5ed7c"/>
+<text x="152" y="210" fill="#a1aab2" font-size="26">首次准备：安装 · 按需配置 AI</text>
+<g fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+ <path d="M440 400 H608" stroke="#818c94" marker-end="url(#arrow)"/>
+ <path d="M950 400 H1118" stroke="#818c94" marker-end="url(#arrow)"/>
+ <path d="M1290 500 V590" stroke="#818c94"/>
+ <path d="M1290 590 V768" stroke="#b5ed7c" marker-end="url(#arrow-accent)"/>
+ <path d="M1290 590 H780 V648" stroke="#818c94" marker-end="url(#arrow)"/>
+ <path d="M950 730 H1035 V845 H1118" stroke="#818c94" marker-end="url(#arrow)"/>
+</g>
+<circle cx="1290" cy="590" r="5" fill="#b5ed7c"/>
+<text class="edge-label" x="1310" y="656" fill="#b5ed7c">满意</text>
+<text class="edge-label" x="1310" y="696" fill="#b5ed7c">直接下载</text>
+<text class="edge-label" x="960" y="572" fill="#a1aab2">需调整或去背景</text>
+
+<g id="upload"><rect x="100" y="300" width="340" height="200" rx="16" fill="#191c1f" stroke="#34393e" stroke-width="2"/>
+<text x="130" y="344" font-size="24" fill="#b5ed7c">01</text>
+<text class="label" x="130" y="408" fill="#e4e6eb">上传产品图</text>
+<text class="body" x="130" y="458" fill="#a1aab2">选择包含印花的图片</text></g>
+<g id="extract"><rect x="610" y="300" width="340" height="200" rx="16" fill="#191c1f" stroke="#34393e" stroke-width="2"/>
+<text x="640" y="344" font-size="24" fill="#b5ed7c">02</text>
+<text class="label" x="640" y="408" fill="#e4e6eb">提取印花</text>
+<text class="body" x="640" y="458" fill="#a1aab2">选择 AI 或本地提取</text></g>
+<g id="preview"><rect x="1120" y="300" width="340" height="200" rx="16" fill="#191c1f" stroke="#34393e" stroke-width="2"/>
+<text x="1150" y="344" font-size="24" fill="#b5ed7c">03</text>
+<text class="label" x="1150" y="408" fill="#e4e6eb">预览结果</text>
+<text class="body" x="1150" y="458" fill="#a1aab2">检查文字、细线与底色</text></g>
+<g id="adjust"><rect x="610" y="650" width="340" height="160" rx="16" fill="#191c1f" stroke="#34393e" stroke-width="2"/>
+<text class="label" x="640" y="713" fill="#e4e6eb">继续精修</text>
+<text class="body" x="640" y="760" fill="#a1aab2">用画笔补充或擦除</text></g>
+<g id="download"><rect x="1120" y="770" width="340" height="150" rx="16" fill="#b5ed7c" stroke="#b5ed7c" stroke-width="2"/>
+<text class="label" x="1150" y="833" fill="#172011">下载透明 PNG</text>
+<text class="body" x="1150" y="880" fill="#354c29">保存满意的结果</text></g>
+</svg>

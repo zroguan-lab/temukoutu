@@ -1,0 +1,92 @@
+{
+  "width": 1600,
+  "height": 1000,
+  "preparation": "首次准备：安装 · 按需配置 AI",
+  "nodes": [
+    {
+      "id": "upload",
+      "label": "上传产品图",
+      "description": "选择包含印花的图片",
+      "x": 100,
+      "y": 300,
+      "w": 340,
+      "h": 200,
+      "step": "01"
+    },
+    {
+      "id": "extract",
+      "label": "提取印花",
+      "description": "圈住图案，开始提取",
+      "x": 610,
+      "y": 300,
+      "w": 340,
+      "h": 200,
+      "step": "02"
+    },
+    {
+      "id": "preview",
+      "label": "预览结果",
+      "description": "检查文字、细线与底色",
+      "x": 1120,
+      "y": 300,
+      "w": 340,
+      "h": 200,
+      "step": "03"
+    },
+    {
+      "id": "adjust",
+      "label": "继续精修",
+      "description": "用画笔补充或擦除",
+      "x": 610,
+      "y": 650,
+      "w": 340,
+      "h": 160,
+      "step": "04"
+    },
+    {
+      "id": "download",
+      "label": "下载透明 PNG",
+      "description": "保存满意的结果",
+      "x": 1120,
+      "y": 770,
+      "w": 340,
+      "h": 150,
+      "step": "05"
+    }
+  ],
+  "edges": [
+    {
+      "from": "upload",
+      "to": "extract"
+    },
+    {
+      "from": "extract",
+      "to": "preview"
+    },
+    {
+      "from": "preview",
+      "to": "download",
+      "condition": "满意，直接下载"
+    },
+    {
+      "from": "preview",
+      "to": "adjust",
+      "condition": "需调整或去背景"
+    },
+    {
+      "from": "adjust",
+      "to": "download",
+      "condition": "调整后下载"
+    }
+  ],
+  "tokens": {
+    "background": "#111315",
+    "panel": "#191c1f",
+    "border": "#34393e",
+    "text": "#e4e6eb",
+    "muted": "#a1aab2",
+    "accent": "#b5ed7c",
+    "ink": "#172011"
+  },
+  "design_source": "No design.md found; palette verified in frontend/src/style.css. Graph layout follows su-diagram and graph-first principles from su-black-purple-gif; static export only."
+}

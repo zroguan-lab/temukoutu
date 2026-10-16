@@ -34,13 +34,21 @@ class Store:
     def write_meta(self, task_id, meta):
         atomic_bytes(self.root/task_id/"meta.json", json.dumps(meta,ensure_ascii=False).encode())
 
-    def create(self, image):
+    def create(self, image, provenance=None):
         task_id = uuid.uuid4().hex
         path = self.root/task_id
         path.mkdir()
         save_png(path/"original.png",image)
         self.write_meta(task_id,{"id":task_id,"history":[],"cursor":-1,"version":"0.1.0"})
-        self.commit(task_id,image,image.getchannel("A"),{"method":"unprocessed","transformed":False,"warnings":["请先确认印花选区，再生成候选蒙版"]})
+        meta = self.meta(task_id)
+        if provenance:
+            meta["provenance"] = provenance
+            self.write_meta(task_id, meta)
+        transparent = bool(provenance and provenance.get("transparent"))
+        warning = ("AI 生成图：请对照原商品图检查文字与细节，原生成文件已保留" if transparent
+                   else "AI 生成图尚无透明背景，请生成分割候选或用画笔清理背景；原生成文件已保留" if provenance
+                   else "请先确认印花选区，再生成候选蒙版")
+        self.commit(task_id,image,image.getchannel("A"),{"method":"generated" if transparent else "unprocessed","transformed":False,"warnings":[warning]})
         return self.describe(task_id)
 
     def current(self, task_id):
@@ -63,7 +71,7 @@ class Store:
         for name, candidate in (candidates or {}).items():
             save_png(folder/(name+".png"),candidate)
         entry = {**info,"rev":rev,"width":image.width,"height":image.height,
-                 "candidates":list(candidates or {}),"ai_used":False,"status":"needs_review"}
+                 "candidates":list(candidates or {}),"ai_used":bool(meta.get("provenance")),"status":"needs_review"}
         history = meta["history"][:meta["cursor"]+1] + [entry]
         meta["history"] = history[-20:]
         meta["cursor"] = len(meta["history"])-1
@@ -80,7 +88,7 @@ class Store:
         meta = self.meta(task_id)
         entry = meta["history"][meta["cursor"]]
         return {**entry,"id":task_id,"version":meta["version"],"can_undo":meta["cursor"]>0,
-                "can_redo":meta["cursor"]<len(meta["history"])-1,"export":meta.get("export")}
+                "can_redo":meta["cursor"]<len(meta["history"])-1,"export":meta.get("export"),"provenance":meta.get("provenance")}
 
     def history(self, task_id, direction):
         meta = self.meta(task_id)

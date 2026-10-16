@@ -17,10 +17,11 @@ from PIL import Image
 from extractor_core.io import read_image, png_bytes, MAX_BYTES
 from extractor_core.detection import detect
 from extractor_core.transforms import crop, perspective
-from extractor_core.segmentation import segment
+from extractor_core.providers import LOCAL_MASK_PROVIDER
 from extractor_core.masks import adjust
 from extractor_core.export import compose, export_png
 from .storage import Store
+from .cloud import install_cloud_routes
 
 ROOT = Path(__file__).resolve().parents[2]
 POOL = ThreadPoolExecutor(max_workers=2,thread_name_prefix="segmentation")
@@ -98,11 +99,12 @@ def validate_ready(image, mask, info):
         raise ValueError("当前蒙版仍保留整张工作图，没有移除背景；请生成分割候选或使用擦除画笔")
 
 
-def create_app(data_dir=None):
+def create_app(data_dir=None, *, image_edit_provider=None, config_path=None, account_providers=None):
     app = FastAPI(title="Print Extractor AI",version="0.1.0")
     app.add_middleware(RequestSizeLimit)
     store = Store(data_dir or os.environ.get("PRINT_EXTRACTOR_DATA",ROOT/"data"/"tasks"))
     app.state.store = store
+    install_cloud_routes(app, store, image_edit_provider, config_path, account_providers)
 
     @app.middleware("http")
     async def local_only(request: Request, call_next):
@@ -122,7 +124,9 @@ def create_app(data_dir=None):
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):
-        return JSONResponse({"error":{"code":"validation","message":"参数无效","details":str(exc)}},status_code=422)
+        # Validation details must never echo a submitted credential or request body.
+        details = [{"loc": e["loc"], "type": e["type"]} for e in exc.errors()]
+        return JSONResponse({"error":{"code":"validation","message":"参数无效","details":details}},status_code=422)
 
     @app.exception_handler(HTTPException)
     async def http_error(request, exc):
@@ -147,7 +151,7 @@ def create_app(data_dir=None):
 
     def bounded_segment(image, method, options=None, seed=None):
         # Timed work is pure: a late result can never mutate a task.
-        future = POOL.submit(segment,image,method,options,seed)
+        future = POOL.submit(LOCAL_MASK_PROVIDER.segment,image,method,options,seed)
         try:
             return future.result(timeout=45)
         except TimeoutError:

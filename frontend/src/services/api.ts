@@ -1,8 +1,8 @@
-export type Task = {id:string;rev:string;width:number;height:number;method:string;status:string;transformed:boolean;ai_used:boolean;warnings:string[];can_undo:boolean;can_redo:boolean;candidates:string[];export?:ExportInfo};
+export type Task = {provenance?:{task_id:string;generation_id:string;provider:string;model:string;transparent:boolean};id:string;rev:string;width:number;height:number;method:string;status:string;transformed:boolean;ai_used:boolean;warnings:string[];can_undo:boolean;can_redo:boolean;candidates:string[];export?:ExportInfo};
 export type ExportInfo = {width:number;height:number;alpha_min:number;alpha_max:number;possible_background_residue:boolean;warnings:string[];native_width?:number;native_height?:number;resampled?:boolean;detail_note?:string};
-export async function request<T>(path:string, body?:unknown, method='POST'):Promise<T> {
+export async function request<T>(path:string, body?:unknown, method='POST', timeoutMs=100_000):Promise<T> {
   const controller = new AbortController();
-  const timer = window.setTimeout(()=>controller.abort(),100_000);
+  const timer = window.setTimeout(()=>controller.abort(),timeoutMs);
   try {
     const response = await fetch('/api/'+path, {method,signal:controller.signal,
       headers:body instanceof FormData || body === undefined ? {} : {'Content-Type':'application/json'},

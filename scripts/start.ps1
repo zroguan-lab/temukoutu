@@ -3,6 +3,8 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $root
 $address = 'http://127.0.0.1:7860'
+$startupMutex = [System.Threading.Mutex]::new($false, 'Local\PrintExtractorAI-7860')
+$ownsStartupMutex = $false
 function Test-App {
     try {
         $health = Invoke-RestMethod -Uri "$address/api/health" -TimeoutSec 2
@@ -10,6 +12,10 @@ function Test-App {
     } catch { return $false }
 }
 try {
+    try { $ownsStartupMutex = $startupMutex.WaitOne(30000) }
+    catch [System.Threading.AbandonedMutexException] { $ownsStartupMutex = $true }
+    if (-not $ownsStartupMutex) { throw 'Application startup is already in progress. Wait and retry.' }
+    # The backend reads the user-owned AI settings; no Key is placed on this command line.
     if (Test-App) {
         Write-Host 'Print Extractor AI is already running.'
         if (-not $NoBrowser) { Start-Process $address }
@@ -40,3 +46,7 @@ try {
     Write-Host "Print Extractor AI ready: $address (PID $($process.Id))" -ForegroundColor Green
     if (-not $NoBrowser) { Start-Process $address }
 } catch { Write-Error $_; exit 1 }
+finally {
+    if ($ownsStartupMutex) { $startupMutex.ReleaseMutex() }
+    $startupMutex.Dispose()
+}

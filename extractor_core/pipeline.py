@@ -3,7 +3,7 @@ from PIL import Image
 import json
 from .io import read_image, save_png, atomic_bytes, MAX_BYTES
 from .transforms import crop
-from .segmentation import segment
+from .providers import LOCAL_MASK_PROVIDER
 from .export import export_png
 from .masks import adjust
 
@@ -24,7 +24,7 @@ def extract(input_path, output_path, roi=None, mask=None, method="auto", options
     if roi is not None:
         image = crop(image,roi)
     if mask is None:
-        mask, warnings = segment(image,method,options)
+        mask, warnings = LOCAL_MASK_PROVIDER.segment(image,method,options)
     else:
         mask = mask.convert("L") if isinstance(mask,Image.Image) else Image.open(mask).convert("L")
         warnings = ["用户蒙版，需人工检查细线与衣服残留"]
